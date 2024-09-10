@@ -51,7 +51,7 @@
 
         window.onmousewheel= e => {
           let delta = camera.fov
-          delta += e.deltaY/50
+          delta += e.deltaY/25
           camera.fov = Math.min(120, Math.max(10, delta))
           camera.updateProjectionMatrix()
           
