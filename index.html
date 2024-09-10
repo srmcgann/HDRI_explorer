@@ -104,7 +104,7 @@
 
         function onPointerMove( event ) {
           if ( isUserInteracting === true ) {
-            var mag = .005 + camera.fov/700
+            var mag = .01 + camera.fov/450
             lon = ( onPointerDownPointerX - event.clientX ) * mag + onPointerDownLon
             lat = ( onPointerDownPointerY - event.clientY ) * mag + onPointerDownLat
           }
