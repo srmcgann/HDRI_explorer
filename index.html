@@ -36,23 +36,32 @@
       `
 
       script = `
-        import * as THREE from 'three'
-        let camera, scene, renderer
+        import * as THREE from 'https://threejs.org/build/three.module.js'
+        var camera
+        let scene, renderer
         let isUserInteracting = false,
-          lon = 0, lat = 0,
-          phi = 0, theta = 0,
-          onPointerDownPointerX = 0,
-          onPointerDownPointerY = 0,
-          onPointerDownLon = 0,
-          onPointerDownLat = 0
+            lon = 0, lat = 0,
+            phi = 0, theta = 0,
+            onPointerDownPointerX = 0,
+            onPointerDownPointerY = 0,
+            onPointerDownLon = 0,
+            onPointerDownLat = 0
 
         const distance = .5
 
+        window.onmousewheel= e => {
+          let delta = camera.fov
+          delta += e.deltaY/50
+          camera.fov = Math.min(120, Math.max(10, delta))
+          camera.updateProjectionMatrix()
+          
+        }
+
         function init(url){
           const container = document.getElementById( 'container' )
-          camera = new THREE.PerspectiveCamera( 75, 16/9, .25, 10 )
+          camera = new THREE.PerspectiveCamera( 50, 16/9, .05, 1e6)
           scene = new THREE.Scene()
-          const geometry = new THREE.SphereGeometry( 2, 32, 120 )
+          const geometry = new THREE.SphereGeometry( 1e4, 16, 60 )
           geometry.scale( - 1, 1, 1 )
           var texture
           if(url.toLowerCase().indexOf('.mp4') != -1 ||
@@ -64,20 +73,20 @@
             vid.src = url
             vid.play()
             texture = new THREE.VideoTexture( vid )
-           }else{
+          }else{
             texture = new THREE.TextureLoader().load(url)
             texture.wrapS = THREE.RepeatWrapping
             texture.wrapT = THREE.RepeatWrapping
             texture.repeat.set( 1, 1 )
-           }
-          
+          }
+
           texture.colorSpace = THREE.SRGBColorSpace
           const material = new THREE.MeshBasicMaterial( { map: texture } )
           const mesh = new THREE.Mesh( geometry, material )
           scene.add( mesh )
           renderer = new THREE.WebGLRenderer()
           renderer.setPixelRatio( window.devicePixelRatio )
-          renderer.setSize( window.innerWidth, window.innerHeight )
+          renderer.setSize( 1920, 1080 )
           renderer.setAnimationLoop( animate )
           container.appendChild( renderer.domElement )
           document.addEventListener( 'pointerdown', onPointerDown )
@@ -95,8 +104,9 @@
 
         function onPointerMove( event ) {
           if ( isUserInteracting === true ) {
-            lon = ( onPointerDownPointerX - event.clientX ) * 0.2 + onPointerDownLon
-            lat = ( onPointerDownPointerY - event.clientY ) * 0.2 + onPointerDownLat
+            var mag = .005 + camera.fov/700
+            lon = ( onPointerDownPointerX - event.clientX ) * mag + onPointerDownLon
+            lat = ( onPointerDownPointerY - event.clientY ) * mag + onPointerDownLat
           }
         }
 
