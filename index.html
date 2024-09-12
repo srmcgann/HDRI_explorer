@@ -49,7 +49,7 @@
 
         const distance = 1e4-9e3
 
-        var func = navigator.userAgent.toLowerCase().indexOf('firefox') != -1 ? "wheel" : "mousewheel"
+        var func = navigator.userAgent.toLowerCase().indexOf('firefox') != -1 ? "onwheel" : "onmousewheel"
         window[func]= e => {
           let delta = camera.fov
           delta += e.deltaY/25
