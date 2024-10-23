@@ -26,6 +26,8 @@
   <body>
     <div id="container"></div>
     <script>
+      var material 
+      var materialLoaded = false
       importMap = `
         {
           "imports": {
@@ -62,8 +64,8 @@
           const container = document.getElementById( 'container' )
           camera = new THREE.PerspectiveCamera( 100, 16/9, .05, 1e6)
           scene = new THREE.Scene()
-          scene.background = new THREE.Color( 0xff0000 );
-          const geometry = new THREE.SphereGeometry( 1e4, 128, 480 )
+          //scene.background = new THREE.Color( 0xffffff );
+          const geometry = new THREE.SphereGeometry( 1e4, 64, 128 )
           geometry.scale( - 1, 1, 1 )
           var texture
           if(url.toLowerCase().indexOf('.mp4') != -1 ||
@@ -72,18 +74,26 @@
             vid.muted = true
             vid.loop = true
             vid.crossOrigin = true
+            vid.oncanplay = () =>{
+              materialLoaded = true
+            }
             vid.src = url
             vid.play()
             texture = new THREE.VideoTexture( vid )
-          }else{
-            texture = new THREE.TextureLoader().load(url)
+            //texture.offset  = 0
+            texture.anisotropy = 1
             texture.wrapS = THREE.RepeatWrapping
             texture.wrapT = THREE.RepeatWrapping
             texture.repeat.set( 1, 1 )
+          }else{
+            texture = new THREE.TextureLoader().load(url)
+            //texture.wrapS = THREE.RepeatWrapping
+            //texture.wrapT = THREE.RepeatWrapping
+            //texture.repeat.set( 1, 1 )
           }
 
           texture.colorSpace = THREE.SRGBColorSpace
-          const material = new THREE.MeshBasicMaterial( { map: texture } )
+          material = new THREE.MeshBasicMaterial( { map: texture } )
           const mesh = new THREE.Mesh( geometry, material )
           scene.add( mesh )
           renderer = new THREE.WebGLRenderer()
@@ -125,6 +135,7 @@
           camera.position.z = distance * Math.sin( phi ) * Math.sin( theta )
           camera.lookAt( 0, 0, 0 )
           renderer.render( scene, camera )
+          if(materialLoaded) material.map.needsUpdate = true
         }
 
         var url
