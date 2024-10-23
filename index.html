@@ -88,6 +88,7 @@
           renderer = new THREE.WebGLRenderer()
           renderer.setPixelRatio( window.devicePixelRatio )
           renderer.setSize( 1920, 1080 )
+          renderer.setClearColorHex( 0xffffff, 1 );
           renderer.setAnimationLoop( animate )
           container.appendChild( renderer.domElement )
           document.addEventListener( 'pointerdown', onPointerDown )
